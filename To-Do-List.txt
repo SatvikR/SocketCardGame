@@ -1,0 +1,9 @@
+To-Do-List:
+[] make a card grabbing command(automatic)
+[] make a system that lets you grab until you fail to steal
+[] fishing system
+[] other deck to have cards for fishing
+[] auto-detect books of 4
+[] game ends when all 13 books have been won
+[] display if won or lost
+[] system to check if there are cards left in fishing deck (if there are no more cards and they have no cards in there personal deck, person is out)
