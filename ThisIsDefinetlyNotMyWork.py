@@ -35,12 +35,17 @@ while True:
                     mycards.append(str(c))
                 theotherplayers = pickleofdamessage[2]
                 print(theotherplayers)
+            elif pickleofdamessage[0] == "newhand":
+                mycards_objects = pickleofdamessage[1]
+                for c in pickleofdamessage[1]:
+                    print(str(c))
+                    mycards.append(str(c))
             elif pickleofdamessage[0] == "notice":
                 print(pickleofdamessage[1])
             elif pickleofdamessage[0] == "fished":
                 print(pickleofdamessage[1])
                 matches = [x for x in mycards_objects if x.value == pickleofdamessage[2]]
-                server.send(pickle.dumps(["matches", matches]))
+                server.send(pickle.dumps(["matches", matches,pickleofdamessage[3]]))
                
                 
         else:   # Stuff that we want to tell the server

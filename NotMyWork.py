@@ -64,16 +64,21 @@ def clientthread(conn, addr):
                         playerclientwantstostealfrom = contents[2]
                         qwerty = conn_from_name(playerclientwantstostealfrom)
                         print(qwerty)   
-                        qwerty.send(pickle.dumps(["fished", name + "would like a " + value, value]))
+                        qwerty.send(pickle.dumps(["fished", name + " would like a " + value, value, name]))
                         waiting = False
                         print(waiting)
                     elif contents[0] == "matches":
+                        matches = contents[1]
                         player_index = list_of_clients.index(conn)
+                        conn_of_fisher = conn_from_name(contents[2])
+                        fisher_index = list_of_clients.index(conn_of_fisher)
                         for f in range(len(matches)):
-                            CardList[player_index].append(matches[f])
-                        conn.send(pickle.dumps(["yourhand", CardList[player_index]]))
-                                       
-                              
+                            CardList[fisher_index].append(matches[f])
+                            print(matches[f])
+                            print(CardList[player_index])
+                            CardList[player_index].remove(matches[f])
+                        conn_of_fisher.send(pickle.dumps(["newhand", CardList[fisher_index]]))  
+                        conn.send(pickle.dumps(["newhand", CardList[player_index]]))
                 else:
                     remove(conn) 
   
