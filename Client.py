@@ -19,6 +19,7 @@ name = input()
 server.send(pickle.dumps(["name", name]))
 yes_know_maybe = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen",
                   "King"]
+gofish = False
 
 while True:
     # maintains a list of possible input streams 
@@ -46,13 +47,17 @@ while True:
             elif pickleofdamessage[0] == "fished":
                 print(pickleofdamessage[1])
                 matches = [x for x in mycards_objects if x.value == pickleofdamessage[2]]
+                if len(matches) == 0:
+                    gofish == True
+                else:
+                    gofish == False
                 mycards.clear()
                 for i in range(len(matches)):
                     mycards_objects.remove(matches[i])
                 for c in mycards_objects:
                     print(str(c))
                     mycards.append(str(c))
-                server.send(pickle.dumps(["matches", matches, pickleofdamessage[3]]))
+                server.send(pickle.dumps(["matches", matches, pickleofdamessage[3], gofish]))
                 server.send(pickle.dumps(["sync", mycards_objects]))
 
 

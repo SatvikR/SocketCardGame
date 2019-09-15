@@ -27,7 +27,6 @@ IP_address = str(sys.argv[1])
 Port = int(sys.argv[2])
 
 server.bind((IP_address, Port))
-# doihavefriends = "NO"
 print("How many players would you like in the game?")
 maxplayersforgame = input()
 list_of_names = []
@@ -36,13 +35,15 @@ list_of_clients = []
 TheDeckOfDecks = Deck()
 dict_of_clients = {}
 turn = None
+cycle = 1
 TheTurnNumber = 0
 waiting = True
-
+fishing_success = False
 
 def clientthread(conn, addr):
     global waiting
     global list_of_names
+    global fishing_success
     while True:
         try:
             message = conn.recv(2048)
@@ -58,7 +59,6 @@ def clientthread(conn, addr):
                     if len(list_of_names) == int(maxplayersforgame):
                         broadcast(["theotherplayers", list_of_names], None)
                         print("nammeeeese", list_of_names)
-
                 elif contents[0] == "playcard":
                     print(dict_of_clients[conn] + " played an " + str(contents[1]))
                     broadcast(["notice", dict_of_clients[conn] + " played a(n) " + str(contents[1])], conn)
@@ -68,30 +68,34 @@ def clientthread(conn, addr):
                     qwerty = conn_from_name(playerclientwantstostealfrom)
                     print(qwerty)
                     qwerty.send(pickle.dumps(["fished", name + " would like a " + value, value, name]))
-                    waiting = False
                     print(waiting)
                 elif contents[0] == "sync":
                     player_index = list_of_clients.index(conn)
-                    CardList[player_index] == contents[1]
+                    CardList[player_index] = contents[1]
                 elif contents[0] == "matches":
+                    fishing_holder = False
                     matches = contents[1]
                     conn_of_fisher = conn_from_name(contents[2])
                     fisher_index = list_of_clients.index(conn_of_fisher)
                     for f in range(len(matches)):
                         CardList[fisher_index].append(matches[f])
                     conn_of_fisher.send(pickle.dumps(["newhand", CardList[fisher_index]]))
+                    if len(matches) == 0:
+                        print("here 1")
+                        conn_of_fisher.send(pickle.dumps(["notice", "Go Fish!"]))
+                        fishing_success = False
+                    else:
+                        print("here 2")
+                        fishing_success = True
+                    print(fishing_success, " *before")
+                    waiting = False
+
             else:
                 remove(conn)
 
         except Exception as e:
             print(e)
             continue
-
-
-"""Using the below function, we broadcast the message to all
-clients who's object is not the same as the one sending 
-the message """
-
 
 def broadcast(message, connection):
     for client in list_of_clients:
@@ -105,12 +109,6 @@ def broadcast(message, connection):
 
                 # if the link is broken, we remove the client 
                 remove(client)
-
-
-"""The following function simply removes the object 
-from the list that was created at the beginning of  
-the program"""
-
 
 def remove(connection):
     if connection in list_of_clients:
@@ -144,7 +142,6 @@ for i in range(int(maxplayersforgame)):
         if len(dict_of_clients) == int(maxplayersforgame):
             distribute_cards()
             clientnum = 0
-
             for client in list_of_clients:
                 client.send(pickle.dumps(["yourhand", CardList[clientnum], list_of_names]))
                 clientnum += 1
@@ -153,13 +150,16 @@ for i in range(int(maxplayersforgame)):
 # game
 while True:
     current_client = conn_from_name(turn)
-    current_client.send(pickle.dumps(["notice", "It is now YOUR turn, insert insult here"]))
-    if TheTurnNumber == 0:
-        current_client.send(pickle.dumps(["notice", "It is now YOUR turn, insert insult here"]))
+    current_client.send(pickle.dumps(["notice", "It is now YOUR turn"]))
+    if cycle == 1:
+        current_client.send(pickle.dumps(["notice", "It is now YOUR turn"]))
+        cycle = 21838
     while waiting:
         pass
     waiting = True
-    TheTurnNumber += 1
+    print(fishing_success)
+    if fishing_success == False:
+        TheTurnNumber += 1
     if TheTurnNumber >= int(maxplayersforgame):
         TheTurnNumber -= int(maxplayersforgame)
     turn = list_of_names[TheTurnNumber]
