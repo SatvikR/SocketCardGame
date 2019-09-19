@@ -1,13 +1,9 @@
 # Python program to implement server side of chat room. 
 import socket
-import select
 import sys
 import pickle
-
-ver = sys.version_info[0]
 import _thread as thr
 from DeckOfCards import *
-import json
 
 ver = sys.version_info[0]
 CardList = []
@@ -39,11 +35,14 @@ cycle = 1
 TheTurnNumber = 0
 waiting = True
 fishing_success = False
+all_scores = []
 
 def clientthread(conn, addr):
     global waiting
     global list_of_names
     global fishing_success
+    global TheDeckOfDecks
+    global all_scores
     while True:
         try:
             message = conn.recv(2048)
@@ -73,7 +72,6 @@ def clientthread(conn, addr):
                     player_index = list_of_clients.index(conn)
                     CardList[player_index] = contents[1]
                 elif contents[0] == "matches":
-                    fishing_holder = False
                     matches = contents[1]
                     conn_of_fisher = conn_from_name(contents[2])
                     fisher_index = list_of_clients.index(conn_of_fisher)
@@ -89,13 +87,19 @@ def clientthread(conn, addr):
                         fishing_success = True
                     print(fishing_success, " *before")
                     waiting = False
-
+                elif contents[0] == "out_of_cards":
+                    conn.send(pickle.dumps(["extracard", TheDeckOfDecks.deck    [0]]))
+                    TheDeckOfDecks.deck.pop(0)
+                elif contents[0] == "sync_score":
+                    player_index = list_of_clients.index(conn)
+                    all_scores[player_index] = contents[1]
             else:
                 remove(conn)
 
         except Exception as e:
             print(e)
             continue
+
 
 def broadcast(message, connection):
     for client in list_of_clients:
@@ -110,6 +114,7 @@ def broadcast(message, connection):
                 # if the link is broken, we remove the client 
                 remove(client)
 
+
 def remove(connection):
     if connection in list_of_clients:
         list_of_clients.remove(connection)
@@ -117,6 +122,7 @@ def remove(connection):
 
 def distribute_cards():
     global CardList
+    global TheDeckOfDecks
     shuffle(TheDeckOfDecks.deck)
     CardList = TheDeckOfDecks.DealHand(len(list_of_clients), 7)
     print(CardList)
@@ -135,10 +141,11 @@ def conn_from_name(player_name):
 for i in range(int(maxplayersforgame)):
     conn, addr = server.accept()
     list_of_clients.append(conn)
+    all_scores.append(0)
     # prints the address of the user that just connected 
     print(addr[0] + " connected")
     thr.start_new_thread(clientthread, (conn, addr))
-    while (len(list_of_clients) == int(maxplayersforgame)):
+    while len(list_of_clients) == int(maxplayersforgame):
         if len(dict_of_clients) == int(maxplayersforgame):
             distribute_cards()
             clientnum = 0
@@ -150,15 +157,16 @@ for i in range(int(maxplayersforgame)):
 # game
 while True:
     current_client = conn_from_name(turn)
-    current_client.send(pickle.dumps(["notice", "It is now YOUR turn"]))
+    print("sending to" + turn)
+    current_client.send(pickle.dumps(["yourturn", "It is now YOUR turn"]))
     if cycle == 1:
-        current_client.send(pickle.dumps(["notice", "It is now YOUR turn"]))
+        current_client.send(pickle.dumps(["yourturn", "It is now YOUR turn"]))
         cycle = 21838
     while waiting:
         pass
     waiting = True
     print(fishing_success)
-    if fishing_success == False:
+    if not fishing_success:
         TheTurnNumber += 1
     if TheTurnNumber >= int(maxplayersforgame):
         TheTurnNumber -= int(maxplayersforgame)

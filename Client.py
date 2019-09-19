@@ -17,9 +17,9 @@ mycards = []
 print("What is your name?")
 name = input()
 server.send(pickle.dumps(["name", name]))
-yes_know_maybe = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen",
-                  "King"]
+all_values = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
 gofish = False
+mybooks = 0
 
 while True:
     # maintains a list of possible input streams 
@@ -44,6 +44,16 @@ while True:
                     mycards.append(str(c))
             elif pickleofdamessage[0] == "notice":
                 print(pickleofdamessage[1])
+            elif pickleofdamessage[0] == "yourturn":
+                print(pickleofdamessage[1])
+                for v in range(len(all_values)):
+                    book_size = [l for l in mycards_objects if l.value == all_values[v]]
+                    if len(book_size) == 4:
+                        print("You have all four", all_values[v] + "s!")
+                        mybooks += 1
+                server.send(pickle.dumps(["sync_score", mybooks]))
+                if len(mycards) == 0:
+                    server.send(pickle.dumps(["out_of_cards", "Player", name, "is out of cards."]))
             elif pickleofdamessage[0] == "fished":
                 print(pickleofdamessage[1])
                 matches = [x for x in mycards_objects if x.value == pickleofdamessage[2]]
@@ -57,10 +67,16 @@ while True:
                 for c in mycards_objects:
                     print(str(c))
                     mycards.append(str(c))
+                if len(mycards) == 0:
+                    server.send(pickle.dumps(["out_of_cards", "Player", name, "is out of cards."]))
                 server.send(pickle.dumps(["matches", matches, pickleofdamessage[3], gofish]))
                 server.send(pickle.dumps(["sync", mycards_objects]))
-
-
+            elif pickleofdamessage[0] == "extracard":
+                mycards_objects.append(pickleofdamessage[1])
+                for e in mycards_objects:
+                    print(str(e))
+                    mycards.append(str(e))
+                server.send(pickle.dumps(["sync", mycards_objects]))
         else:  # Stuff that we want to tell the server
             mycards.count
             message = sys.stdin.readline()
@@ -77,7 +93,7 @@ while True:
                 print(theotherplayers)
                 print("Which value would you like to request?")
                 IWANTIT = input()
-                if IWANTIT not in yes_know_maybe:
+                if IWANTIT not in all_values:
                     print(
                         "You have entered an invalid card value. Here are some examples: Jack, Queen, King, Ace, Ten, Three.")
                 else:
