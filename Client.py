@@ -37,6 +37,9 @@ while True:
                     mycards.append(str(c))
                 theotherplayers = pickleofdamessage[2]
                 print(theotherplayers)
+            elif pickleofdamessage[0] == "go_fish":
+                print(pickleofdamessage[1])
+                server.send(pickle.dumps(["out_of_cards", "Player", name, "needs a new card."]))
             elif pickleofdamessage[0] == "newhand":
                 mycards_objects = pickleofdamessage[1]
                 for c in pickleofdamessage[1]:
@@ -50,7 +53,14 @@ while True:
                     book_size = [l for l in mycards_objects if l.value == all_values[v]]
                     if len(book_size) == 4:
                         print("You have all four", all_values[v] + "s!")
+                        for u in book_size:
+                            mycards_objects.remove(u)
+                        mycards.clear()
+                        for c in mycards_objects:
+                            print(str(c))
+                            mycards.append(str(c))
                         mybooks += 1
+                server.send(pickle.dumps(["sync", mycards_objects]))
                 server.send(pickle.dumps(["sync_score", mybooks]))
                 if len(mycards) == 0:
                     server.send(pickle.dumps(["out_of_cards", "Player", name, "is out of cards."]))

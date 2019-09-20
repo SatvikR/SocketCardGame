@@ -80,7 +80,7 @@ def clientthread(conn, addr):
                     conn_of_fisher.send(pickle.dumps(["newhand", CardList[fisher_index]]))
                     if len(matches) == 0:
                         print("here 1")
-                        conn_of_fisher.send(pickle.dumps(["notice", "Go Fish!"]))
+                        conn_of_fisher.send(pickle.dumps(["go_fish", "Go Fish!"]))
                         fishing_success = False
                     else:
                         print("here 2")
@@ -88,7 +88,7 @@ def clientthread(conn, addr):
                     print(fishing_success, " *before")
                     waiting = False
                 elif contents[0] == "out_of_cards":
-                    conn.send(pickle.dumps(["extracard", TheDeckOfDecks.deck    [0]]))
+                    conn.send(pickle.dumps(["extracard", TheDeckOfDecks.deck[0]]))
                     TheDeckOfDecks.deck.pop(0)
                 elif contents[0] == "sync_score":
                     player_index = list_of_clients.index(conn)
@@ -149,7 +149,7 @@ def is_game_finished():
         return True
     else:
         return False
-
+# done
 # setup loop
 for i in range(int(maxplayersforgame)):
     conn, addr = server.accept()
