@@ -1,0 +1,3 @@
+ - Go fish message occasionally does not appear
+ - It is your turn message occasionally does not appear on the first player of the first round
+ - When the first player viewed cards, the list duplicates and prints mulitiple times (only for the first player)

@@ -77,6 +77,13 @@ while True:
                     print(str(e))
                     mycards.append(str(e))
                 server.send(pickle.dumps(["sync", mycards_objects]))
+            elif pickleofdamessage[0] == "winner":
+                print(pickleofdamessage[1])
+                break
+            elif pickleofdamessage[0] == "loser":
+                print(pickleofdamessage[1])
+                break
+
         else:  # Stuff that we want to tell the server
             mycards.count
             message = sys.stdin.readline()
