@@ -104,6 +104,12 @@ while True:
                 server.send(pickle.dumps(["notice", "<" + name + "> " + messagez]))
                 sys.stdout.write("<You>" + messagez + "\n")
                 sys.stdout.flush()
+            elif message == "help\n":
+                print("Hi, I'm bob And Im here to help (not really ok)")
+                print("When it is YOUR TURN do the grab function")
+                print("after you type grab, type a value and then a player's name *wow!!*")
+                print("Here are the rest of the functions that are very self explanatory *use brain to figure out what it does*")
+                print("view\n help\n msg\n")
             elif message == "view\n":  # lets you view cards
                 print(mycards)
             elif message == "grab\n":  # lets you fish from other players
