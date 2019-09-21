@@ -36,9 +36,7 @@ while True:
                     print(str(c))
                     mycards.append(str(c))
                 theotherplayers = pickleofdamessage[2]
-                theotherplayers.remove(name)
-                for x in range(len(theotherplayers)): 
-                    print(theotherplayers[x]), 
+                print(theotherplayers)
             elif pickleofdamessage[0] == "go_fish":
                 print(pickleofdamessage[1])
                 server.send(pickle.dumps(["out_of_cards", "Player", name, "needs a new card."]))
@@ -106,21 +104,16 @@ while True:
                 server.send(pickle.dumps(["notice", "<" + name + "> " + messagez]))
                 sys.stdout.write("<You>" + messagez + "\n")
                 sys.stdout.flush()
+            elif message == "help\n":
+                print("Hi, I'm bob And Im here to help (not really ok)")
+                print("When it is YOUR TURN do the grab function")
+                print("after you type grab, type a value and then a player's name *wow!!*")
+                print("Here are the rest of the functions that are very self explanatory *use brain to figure out what it does*")
+                print("view\n help\n msg\n")
             elif message == "view\n":  # lets you view cards
                 print(mycards)
-            elif message == "help\n":
-                print("Hello, my name is Alexandre!")
-                print("I am here to help you play \"Go Fish (Python Edition)\"")
-                print("Let's get started wiht the basics!")
-                print("You can type \"help\" to bring back this menu!")
-                print("You can type \"message\", hit enter, and then type your message to talk with ALL the other players.")
-                print("You can type \"view\" to see your cards")
-                print("You can type \"grab\", enter the value of the card you would like to request, hit enter again, type in the name of the player you would like to attempt and grab the card from, hit enter for the last time, and all the that the player has of the value you selected will be given to you.")
-                print("If you would like more information on how to play Go Fish, and not run this program, visit: \n https://bicyclecards.com/how-to-play/go-fish/")
-            elif message == "players\n":
-                for x in range(len(theotherplayers)): 
-                    print(theotherplayers[x]), 
             elif message == "grab\n":  # lets you fish from other players
+                print(theotherplayers)
                 print("Which value would you like to request?")
                 IWANTIT = input()
                 if IWANTIT not in all_values:
@@ -128,15 +121,14 @@ while True:
                         "You have entered an invalid card value. Here are some examples: Jack, Queen, King, Ace, Ten, Three.")
                 else:
                     print("Who would you like to request this value from?")
-                    for x in range(len(theotherplayers)): 
-                        print(theotherplayers[x]), 
                     LEMMEGRABIT = input()
                     print(LEMMEGRABIT, name)
                     if (LEMMEGRABIT not in theotherplayers or LEMMEGRABIT == name):
                         print(
                             "There are no players with this name. Here are the names of the other players playing with you:")
-                        for x in range(len(theotherplayers)): 
-                            print(theotherplayers[x]),
+                        for f in range(len(theotherplayers)):
+                            print(theotherplayers[f])
+                        print("\n")
                     else:
                         server.send(pickle.dumps(["Grab", IWANTIT, LEMMEGRABIT]))
                         sys.stdout.write("<You> Requested value " + IWANTIT + " from " + LEMMEGRABIT + "." + "\n")
