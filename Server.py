@@ -185,7 +185,6 @@ while True:
         break
     if not fishing_success:
         TheTurnNumber += 1
-        current_client.send(pickle.dumps(["turn_over"]))
     if TheTurnNumber >= int(maxplayersforgame):
         TheTurnNumber -= int(maxplayersforgame)
     turn = list_of_names[TheTurnNumber]

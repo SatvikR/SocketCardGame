@@ -20,7 +20,6 @@ server.send(pickle.dumps(["name", name]))
 all_values = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
 gofish = False
 mybooks = 0
-my_turn = False
 
 while True:
     # maintains a list of possible input streams 
@@ -51,7 +50,6 @@ while True:
             elif pickleofdamessage[0] == "notice":
                 print(pickleofdamessage[1])
             elif pickleofdamessage[0] == "yourturn":
-                my_turn = True
                 print(pickleofdamessage[1])
                 for v in range(len(all_values)):
                     book_size = [l for l in mycards_objects if l.value == all_values[v]]
@@ -72,9 +70,9 @@ while True:
                 print(pickleofdamessage[1])
                 matches = [x for x in mycards_objects if x.value == pickleofdamessage[2]]
                 if len(matches) == 0:
-                    gofish = True
+                    gofish == True
                 else:
-                    gofish = False
+                    gofish == False
                 mycards.clear()
                 for i in range(len(matches)):
                     mycards_objects.remove(matches[i])
@@ -97,11 +95,9 @@ while True:
             elif pickleofdamessage[0] == "loser":
                 print(pickleofdamessage[1])
                 break
-            elif pickleofdamessage[0] == "turn_over":
-                my_turn = False
-                print()
 
         else:  # Stuff that we want to tell the server
+            mycards.count
             message = sys.stdin.readline()
             message = str(message)
             if message == "msg\n":  # messages all other players
@@ -113,45 +109,38 @@ while True:
             elif message == "view\n":  # lets you view cards
                 print(mycards)
             elif message == "help\n":
-                print("Hello,", name)
-                print("I am here to help you play \"Go Fish (Python Edition)\" by Alexandre and Satvik")
-                print("Let's get started with the basics!")
+                print("Hello, my name is Alexandre!")
+                print("I am here to help you play \"Go Fish (Python Edition)\"")
+                print("Let's get started wiht the basics!")
                 print("You can type \"help\" to bring back this menu!")
-                print("You can type \"message\", hit enter, and then type your message to talk with ALL the other "
-                      "players.")
+                print("You can type \"message\", hit enter, and then type your message to talk with ALL the other players.")
                 print("You can type \"view\" to see your cards")
-                print("You can type \"grab\", enter the value of the card you would like to request, hit enter again, "
-                      "type in the name of the player you would like to attempt and grab the card from, hit enter for "
-                      "the last time, and all the that the player has of the value you selected will be given to you.")
-                print("If you would like more information on how to play Go Fish, and not run this program, visit: \n "
-                      "https://bicyclecards.com/how-to-play/go-fish/")
+                print("You can type \"grab\", enter the value of the card you would like to request, hit enter again, type in the name of the player you would like to attempt and grab the card from, hit enter for the last time, and all the that the player has of the value you selected will be given to you.")
+                print("If you would like more information on how to play Go Fish, and not run this program, visit: \n https://bicyclecards.com/how-to-play/go-fish/")
             elif message == "players\n":
                 for x in range(len(theotherplayers)): 
                     print(theotherplayers[x]), 
             elif message == "grab\n":  # lets you fish from other players
-                if my_turn:
-                    print("Which value would you like to request?")
-                    IWANTIT = input()
-                    if IWANTIT not in all_values:
+                print("Which value would you like to request?")
+                IWANTIT = input()
+                if IWANTIT not in all_values:
+                    print(
+                        "You have entered an invalid card value. Here are some examples: Jack, Queen, King, Ace, Ten, Three.")
+                else:
+                    print("Who would you like to request this value from?")
+                    for x in range(len(theotherplayers)): 
+                        print(theotherplayers[x]), 
+                    LEMMEGRABIT = input()
+                    print(LEMMEGRABIT, name)
+                    if (LEMMEGRABIT not in theotherplayers or LEMMEGRABIT == name):
                         print(
-                            "You have entered an invalid card value. Here are some examples: Jack, Queen, King, Ace, "
-                            "Ten, Three.")
-                    else:
-                        print("Who would you like to request this value from?")
-                        for x in range(len(theotherplayers)):
+                            "There are no players with this name. Here are the names of the other players playing with you:")
+                        for x in range(len(theotherplayers)): 
                             print(theotherplayers[x]),
-                        LEMMEGRABIT = input()
-                        print(LEMMEGRABIT, name)
-                        if LEMMEGRABIT not in theotherplayers or LEMMEGRABIT == name:
-                            print(
-                                "There are no players with this name. Here are the names of the other players playing "
-                                "with you:")
-                            for x in range(len(theotherplayers)):
-                                print(theotherplayers[x]),
-                        else:
-                            server.send(pickle.dumps(["Grab", IWANTIT, LEMMEGRABIT]))
-                            sys.stdout.write("<You> Requested value " + IWANTIT + " from " + LEMMEGRABIT + "." + "\n")
-                            sys.stdout.flush()
+                    else:
+                        server.send(pickle.dumps(["Grab", IWANTIT, LEMMEGRABIT]))
+                        sys.stdout.write("<You> Requested value " + IWANTIT + " from " + LEMMEGRABIT + "." + "\n")
+                        sys.stdout.flush()
 server.close()
 
 # Even though we are sending a message indicated by 'msg' we still end up sending the msg as a notice
