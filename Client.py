@@ -47,6 +47,7 @@ while True:
             elif pickleofdamessage[0] == "notice":
                 print(pickleofdamessage[1])
             elif pickleofdamessage[0] == "yourturn":
+                IsItMyTurn = True
                 print(pickleofdamessage[1])
                 for v in range(len(all_values)):
                     book_size = [l for l in mycards_objects if l.value == all_values[v]]
@@ -112,26 +113,30 @@ while True:
             elif message == "view\n":  # lets you view cards
                 print(mycards)
             elif message == "grab\n":  # lets you fish from other players
-                print(theotherplayers)
-                print("Which value would you like to request?")
-                IWANTIT = input()
-                if IWANTIT not in all_values:
-                    print(
-                        "You have entered an invalid card value. Here are some examples: Jack, Queen, King, Ace, Ten, Three.")
+                if IsItMyTurn == False:
+                    print("It is not your turn. Please use this command only when it is your turn.")
                 else:
-                    print("Who would you like to request this value from?")
-                    LEMMEGRABIT = input()
-                    print(LEMMEGRABIT, name)
-                    if (LEMMEGRABIT not in theotherplayers or LEMMEGRABIT == name):
+                    print(theotherplayers)
+                    print("Which value would you like to request?")
+                    IWANTIT = input()
+                    if IWANTIT not in all_values:
                         print(
-                            "There are no players with this name. Here are the names of the other players playing with you:")
-                        for f in range(len(theotherplayers)):
-                            print(theotherplayers[f])
-                        print("\n")
+                            "You have entered an invalid card value. Here are some examples: Jack, Queen, King, Ace, Ten, Three.")
                     else:
-                        server.send(pickle.dumps(["Grab", IWANTIT, LEMMEGRABIT]))
-                        sys.stdout.write("<You> Requested value " + IWANTIT + " from " + LEMMEGRABIT + "." + "\n")
-                        sys.stdout.flush()
+                        print("Who would you like to request this value from?")
+                        LEMMEGRABIT = input()
+                        print(LEMMEGRABIT, name)
+                        if (LEMMEGRABIT not in theotherplayers or LEMMEGRABIT == name):
+                            print(
+                                "There are no players with this name. Here are the names of the other players playing with you:")
+                            for f in range(len(theotherplayers)):
+                                print(theotherplayers[f])
+                            print("\n")
+                        else:
+                            server.send(pickle.dumps(["Grab", IWANTIT, LEMMEGRABIT]))
+                            sys.stdout.write("<You> Requested value " + IWANTIT + " from " + LEMMEGRABIT + "." + "\n")
+                            sys.stdout.flush()
+                            IsItMyTurn = False
 server.close()
 
 # Even though we are sending a message indicated by 'msg' we still end up sending the msg as a notice
