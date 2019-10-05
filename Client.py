@@ -111,7 +111,8 @@ while True:
                 print("Here are the rest of the functions that are very self explanatory *use brain to figure out what it does*")
                 print("view\n help\n msg\n")
             elif message == "view\n":  # lets you view cards
-                print(mycards)
+                for e in mycards_objects:
+                    print(str(e))
             elif message == "grab\n":  # lets you fish from other players
                 if IsItMyTurn == False:
                     print("It is not your turn. Please use this command only when it is your turn.")
