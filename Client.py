@@ -17,7 +17,7 @@ mycards = []
 print("What is your name?")
 name = input()
 for line in range(2):
-    sys.stdout.write("\033[F")  # Puts cursor up one line
+    sys.stdout.write('\033[F')  # Puts cursor up one line
     sys.stdout.write('\033[2K\033[1G')  # Deletes line and puts cursor and beginning of line
 print("")
 server.send(pickle.dumps(["name", name]))
