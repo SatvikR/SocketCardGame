@@ -36,7 +36,7 @@ TheTurnNumber = 0
 waiting = True
 fishing_success = False
 all_scores = []
-
+#why
 
 def clientthread(conn, addr):
     global waiting

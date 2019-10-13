@@ -25,6 +25,11 @@ all_values = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "N
 gofish = False
 mybooks = 0
 
+
+def print_bold(text):
+    print('\033[1m' + text + '\033[0m')  # Prints given text bold
+
+
 while True:
     # maintains a list of possible input streams 
     sockets_list = [sys.stdin, server]
@@ -35,7 +40,7 @@ while True:
             pickleofdamessage = pickle.loads(message)
             if pickleofdamessage[0] == "yourhand":
                 mycards_objects = pickleofdamessage[1]
-                print("\n\nYour Hand:")
+                print_bold("\n\nYour Hand:")
                 for c in pickleofdamessage[1]:
                     print(str(c))
                     mycards.append(str(c))
@@ -43,7 +48,7 @@ while True:
                 for p in theotherplayers:
                     if name == p:
                         theotherplayers.remove(p)
-                print("\nThe other players:")
+                print_bold("\nThe other players:")
                 for n in theotherplayers:
                     print(n)
                 print("\n")
@@ -56,7 +61,7 @@ while True:
                     print(str(c))
                     mycards.append(str(c))
             elif pickleofdamessage[0] == "notice":
-                print(pickleofdamessage[1])
+                print_bold(pickleofdamessage[1])
             elif pickleofdamessage[0] == "yourturn":
                 IsItMyTurn = True
                 print(pickleofdamessage[1])
@@ -119,7 +124,8 @@ while True:
                 print("Hi, I'm bob And Im here to help (not really ok)")
                 print("When it is YOUR TURN do the grab function")
                 print("after you type grab, type a value and then a player's name *wow!!*")
-                print("Here are the rest of the functions that are very self explanatory *use brain to figure out what it does*")
+                print(
+                    "Here are the rest of the functions that are very self explanatory *use brain to figure out what it does*")
                 print("view\n help\n msg\n")
             elif message == "view\n":  # lets you view cards
                 for e in mycards_objects:
