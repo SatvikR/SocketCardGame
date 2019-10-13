@@ -1,4 +1,4 @@
-# Python program to implement client side of chat room. 
+# Python program to implement client side of go fish program.
 import socket
 import select  # Python program to implement client side of chat room.
 import sys
@@ -16,6 +16,10 @@ server.connect((IP_address, Port))
 mycards = []
 print("What is your name?")
 name = input()
+for line in range(2):
+    sys.stdout.write("\033[F")  # Puts cursor up one line
+    sys.stdout.write('\033[2K\033[1G')  # Deletes line and puts cursor and beginning of line
+print("")
 server.send(pickle.dumps(["name", name]))
 all_values = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
 gofish = False
@@ -31,11 +35,18 @@ while True:
             pickleofdamessage = pickle.loads(message)
             if pickleofdamessage[0] == "yourhand":
                 mycards_objects = pickleofdamessage[1]
+                print("\n\nYour Hand:")
                 for c in pickleofdamessage[1]:
                     print(str(c))
                     mycards.append(str(c))
                 theotherplayers = pickleofdamessage[2]
-                print(theotherplayers)
+                for p in theotherplayers:
+                    if name == p:
+                        theotherplayers.remove(p)
+                print("\nThe other players:")
+                for n in theotherplayers:
+                    print(n)
+                print("\n")
             elif pickleofdamessage[0] == "go_fish":
                 print(pickleofdamessage[1])
                 server.send(pickle.dumps(["out_of_cards", "Player", name, "needs a new card."]))
