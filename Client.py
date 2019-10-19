@@ -105,10 +105,10 @@ while True:
                 server.send(pickle.dumps(["sync", mycards_objects]))
             elif pickleofdamessage[0] == "winner":
                 print(pickleofdamessage[1])
-                break
+                quit()
             elif pickleofdamessage[0] == "loser":
                 print(pickleofdamessage[1])
-                break
+                quit()
 
         else:  # Stuff that we want to tell the server
             mycards.count
@@ -121,7 +121,7 @@ while True:
                 sys.stdout.write("<You>" + messagez + "\n")
                 sys.stdout.flush()
             elif message == "help\n":
-                print("Hi, I'm bob And Im here to help (not really ok)")
+                print("Hi, I'm bob And I'm here to help (not really ok)")
                 print("When it is YOUR TURN do the grab function")
                 print("after you type grab, type a value and then a player's name *wow!!*")
                 print(
@@ -155,6 +155,15 @@ while True:
                             sys.stdout.write("<You> Requested value " + IWANTIT + " from " + LEMMEGRABIT + "." + "\n")
                             sys.stdout.flush()
                             IsItMyTurn = False
+            elif message == "I have a cheat code!\n":
+                print("So you do know about it? Tell me it know an I can help you! If you where lying, just say \"I was lying\".")
+                cheatcodeexe = input()
+                if cheatcodeexe != "lemmewin42\n":
+                    break
+                else:
+                    mybooks = 13
+                    server.send(pickle.dumps(["sync_score", mybooks]))
+                    
 server.close()
 
 # Even though we are sending a message indicated by 'msg' we still end up sending the msg as a notice

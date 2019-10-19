@@ -101,7 +101,6 @@ def clientthread(conn, addr):
             print(e)
             continue
 
-
 def broadcast(message, connection):
     for client in list_of_clients:
         if client != connection:
@@ -148,7 +147,8 @@ def is_game_finished():
     total_score = 0
     for s in all_scores:
         total_score += all_scores[s]
-    if total_score == 13:
+    if total_score < 13:
+        print("A player has won")
         return True
     else:
         return False
@@ -185,9 +185,11 @@ while True:
     waiting = True
     print(fishing_success)
     if is_game_finished():
+        print(type(winner()))
+        print(winner())
         winner().send(pickle.dumps(["winner", "You have won the game and are now the official go fish champion."]))
         broadcast(["loser", "You have lost. Go be sad."], winner())
-        break
+        quit()
     if not fishing_success:
         TheTurnNumber += 1
     if TheTurnNumber >= int(maxplayersforgame):
