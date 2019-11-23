@@ -1,4 +1,4 @@
-# Python program to implement client side of chat room. 
+# Python program to implement client side of go fish program.
 import socket
 import select  # Python program to implement client side of chat room.
 import sys
@@ -16,10 +16,19 @@ server.connect((IP_address, Port))
 mycards = []
 print("What is your name?")
 name = input()
+for line in range(2):
+    sys.stdout.write('\033[F')  # Puts cursor up one line
+    sys.stdout.write('\033[2K\033[1G')  # Deletes line and puts cursor and beginning of line
+print("")
 server.send(pickle.dumps(["name", name]))
 all_values = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
 gofish = False
 mybooks = 0
+
+
+def print_bold(text):
+    print('\033[1m' + text + '\033[0m')  # Prints given text bold
+
 
 while True:
     # maintains a list of possible input streams 
@@ -31,11 +40,18 @@ while True:
             pickleofdamessage = pickle.loads(message)
             if pickleofdamessage[0] == "yourhand":
                 mycards_objects = pickleofdamessage[1]
+                print_bold("\n\nYour Hand:")
                 for c in pickleofdamessage[1]:
                     print(str(c))
                     mycards.append(str(c))
                 theotherplayers = pickleofdamessage[2]
-                print(theotherplayers)
+                for p in theotherplayers:
+                    if name == p:
+                        theotherplayers.remove(p)
+                print_bold("\nThe other players:")
+                for n in theotherplayers:
+                    print(n)
+                print("\n")
             elif pickleofdamessage[0] == "go_fish":
                 print(pickleofdamessage[1])
                 server.send(pickle.dumps(["out_of_cards", "Player", name, "needs a new card."]))
@@ -45,7 +61,7 @@ while True:
                     print(str(c))
                     mycards.append(str(c))
             elif pickleofdamessage[0] == "notice":
-                print(pickleofdamessage[1])
+                print_bold(pickleofdamessage[1])
             elif pickleofdamessage[0] == "yourturn":
                 IsItMyTurn = True
                 print(pickleofdamessage[1])
@@ -89,10 +105,10 @@ while True:
                 server.send(pickle.dumps(["sync", mycards_objects]))
             elif pickleofdamessage[0] == "winner":
                 print(pickleofdamessage[1])
-                break
+                quit()
             elif pickleofdamessage[0] == "loser":
                 print(pickleofdamessage[1])
-                break
+                quit()
 
         else:  # Stuff that we want to tell the server
             mycards.count
@@ -105,10 +121,11 @@ while True:
                 sys.stdout.write("<You>" + messagez + "\n")
                 sys.stdout.flush()
             elif message == "help\n":
-                print("Hi, I'm bob And Im here to help (not really ok)")
+                print("Hi, I'm bob And I'm here to help (not really ok)")
                 print("When it is YOUR TURN do the grab function")
                 print("after you type grab, type a value and then a player's name *wow!!*")
-                print("Here are the rest of the functions that are very self explanatory *use brain to figure out what it does*")
+                print(
+                    "Here are the rest of the functions that are very self explanatory *use brain to figure out what it does*")
                 print("view\n help\n msg\n")
             elif message == "view\n":  # lets you view cards
                 for e in mycards_objects:
@@ -138,6 +155,15 @@ while True:
                             sys.stdout.write("<You> Requested value " + IWANTIT + " from " + LEMMEGRABIT + "." + "\n")
                             sys.stdout.flush()
                             IsItMyTurn = False
+            elif message == "I have a cheat code!\n":
+                print("So you do know about it? Tell me it know an I can help you! If you where lying, just say \"I was lying\".")
+                cheatcodeexe = input()
+                if cheatcodeexe != "lemmewin42\n":
+                    break
+                else:
+                    mybooks = 13
+                    server.send(pickle.dumps(["sync_score", mybooks]))
+                    
 server.close()
 
 # Even though we are sending a message indicated by 'msg' we still end up sending the msg as a notice

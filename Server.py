@@ -36,6 +36,7 @@ TheTurnNumber = 0
 waiting = True
 fishing_success = False
 all_scores = []
+#why
 
 def clientthread(conn, addr):
     global waiting
@@ -100,7 +101,6 @@ def clientthread(conn, addr):
             print(e)
             continue
 
-
 def broadcast(message, connection):
     for client in list_of_clients:
         if client != connection:
@@ -136,19 +136,24 @@ def conn_from_name(player_name):
     print("!!!!!", player_name, dict_of_clients[connections[0]])
     return connections[0]
 
+
 def winner():
     winnerscore = max(all_scores)
     winner_index = all_scores.index(winnerscore)
     return list_of_clients[winner_index]
 
+
 def is_game_finished():
     total_score = 0
     for s in all_scores:
         total_score += all_scores[s]
-    if total_score == 13:
+    if total_score < 13:
+        print("A player has won")
         return True
     else:
         return False
+
+
 # done
 # setup loop
 for i in range(int(maxplayersforgame)):
@@ -170,7 +175,7 @@ for i in range(int(maxplayersforgame)):
 # game
 while True:
     current_client = conn_from_name(turn)
-    print("sending to" , turn)
+    print("sending to", turn)
     current_client.send(pickle.dumps(["yourturn", "It is now YOUR turn"]))
     if cycle == 1:
         current_client.send(pickle.dumps(["yourturn", "It is now YOUR turn"]))
@@ -179,10 +184,12 @@ while True:
         pass
     waiting = True
     print(fishing_success)
-    if is_game_finished() == True:
+    if is_game_finished():
+        print(type(winner()))
+        print(winner())
         winner().send(pickle.dumps(["winner", "You have won the game and are now the official go fish champion."]))
         broadcast(["loser", "You have lost. Go be sad."], winner())
-        break
+        quit()
     if not fishing_success:
         TheTurnNumber += 1
     if TheTurnNumber >= int(maxplayersforgame):
